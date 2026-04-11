@@ -1,3 +1,4 @@
+"use client";
 import { motion } from "motion/react";
 import { LayoutTemplate, Wrench, Lightbulb } from "lucide-react";
 
