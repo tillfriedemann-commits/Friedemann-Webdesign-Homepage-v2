@@ -8,9 +8,9 @@ import Footer from "../components/Footer";
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-white selection:bg-brand-orange/20 selection:text-brand-orange">
+    <div className="relative min-h-screen bg-white selection:bg-brand-orange/20 selection:text-brand-orange">
       <Header />
-      <main>
+      <main className="relative">
         <HeroSection />
         <Services />
         <AboutMe />

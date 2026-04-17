@@ -23,13 +23,13 @@ export default function Footer() {
           <div>
             <h4 className="text-slate-900 font-semibold mb-4">Kontakt</h4>
             <address className="not-italic text-sm space-y-2">
-              <p>Max-Mustermann-Straße 1</p>
-              <p>12345 Musterstadt</p>
+              <p>Kornblumenweg 9</p>
+              <p>29399 Wahrenholz</p>
               <p className="pt-2">
-                <a href="tel:+49123456789" className="hover:text-brand-orange transition-colors">0123 / 456 789</a>
+                <a href="tel:01608592128" className="hover:text-brand-orange transition-colors">01608592128</a>
               </p>
               <p>
-                <a href="mailto:hallo@friedemann-webdesign.de" className="hover:text-brand-orange transition-colors">hallo@friedemann-webdesign.de</a>
+                <a href="mailto:till.friedemann@gmx.de" className="hover:text-brand-orange transition-colors">till.friedemann@gmx.de</a>
               </p>
             </address>
           </div>
@@ -37,9 +37,9 @@ export default function Footer() {
           <div>
             <h4 className="text-slate-900 font-semibold mb-4">Rechtliches</h4>
             <ul className="text-sm space-y-1">
-              <li><Link href="/impressum" className="block py-1.5 hover:text-brand-blue transition-colors">Impressum</Link></li>
-              <li><Link href="/datenschutz" className="block py-1.5 hover:text-brand-blue transition-colors">Datenschutz</Link></li>
-              <li><Link href="/agb" className="block py-1.5 hover:text-brand-blue transition-colors">AGB</Link></li>
+              <li><Link href="/impressum" prefetch={false} className="block py-1.5 hover:text-brand-blue transition-colors">Impressum</Link></li>
+              <li><Link href="/datenschutz" prefetch={false} className="block py-1.5 hover:text-brand-blue transition-colors">Datenschutz</Link></li>
+              <li><Link href="/agb" prefetch={false} className="block py-1.5 hover:text-brand-blue transition-colors">AGB</Link></li>
             </ul>
           </div>
 
