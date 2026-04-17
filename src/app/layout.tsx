@@ -7,7 +7,7 @@ export const metadata = {
   title: 'Friedemann Webdesign | Lokal, Modern, Persönlich',
   description: 'Dein lokaler Ansprechpartner für modernes Webdesign.',
   icons: {
-    icon: '/logo-icon.png',
+    icon: '/logo-icon.webp',
   },
 };
 

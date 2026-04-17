@@ -10,7 +10,7 @@ export default function Footer() {
           <div>
             <div className="mb-4">
               <img
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Friedemann Webdesign Logo"
                 className="h-20 w-auto object-contain"
               />
@@ -29,7 +29,7 @@ export default function Footer() {
                 <a href="tel:01608592128" className="hover:text-brand-orange transition-colors">01608592128</a>
               </p>
               <p>
-                <a href="mailto:till.friedemann@gmx.de" className="hover:text-brand-orange transition-colors">till.friedemann@gmx.de</a>
+                <a href="mailto:info@friedemann-webdesign.de" className="hover:text-brand-orange transition-colors">info@friedemann-webdesign.de</a>
               </p>
             </address>
           </div>

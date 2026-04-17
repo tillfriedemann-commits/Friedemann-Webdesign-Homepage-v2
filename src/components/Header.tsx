@@ -11,7 +11,7 @@ export default function Header() {
           className="flex items-center gap-2"
         >
           <img
-            src="/logo.png"
+            src="/logo.webp"
             alt="Friedemann Webdesign Logo"
             className="h-24 w-auto object-contain py-1"
           />
