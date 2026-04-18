@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Check } from "lucide-react";
 
 export default function AboutMe() {
@@ -15,7 +15,7 @@ export default function AboutMe() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -30,9 +30,9 @@ export default function AboutMe() {
             </div>
             <div className="absolute -top-6 -right-6 w-32 h-32 bg-brand-orange/10 rounded-full blur-2xl -z-10"></div>
             <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-brand-blue/10 rounded-full blur-2xl -z-10"></div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -65,7 +65,7 @@ export default function AboutMe() {
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </m.div>
 
         </div>
       </div>

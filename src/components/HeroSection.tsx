@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { m, useScroll, useTransform } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { AuroraBackground } from "./ui/aurora-background";
 
@@ -24,7 +24,7 @@ export default function HeroSection() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
@@ -45,7 +45,7 @@ export default function HeroSection() {
                 Ohne Agentur-Chaos, mit echtem Fokus auf dein Geschäft.
               </p>
 
-              <motion.div
+              <m.div
                 whileHover={{ y: -2 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
@@ -56,8 +56,8 @@ export default function HeroSection() {
                   Kostenlos anfragen
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </a>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
 
           </div>
         </div>

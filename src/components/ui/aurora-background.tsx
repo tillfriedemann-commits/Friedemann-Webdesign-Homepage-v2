@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "../../lib/utils";
 import React, { ReactNode } from "react";
-import { motion, MotionValue } from "motion/react";
+import { m, MotionValue } from "motion/react";
 
 interface AuroraBackgroundProps extends React.HTMLProps<HTMLDivElement> {
   children: ReactNode;
@@ -25,7 +25,7 @@ export const AuroraBackground = ({
       {...props}
     >
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
+        <m.div
           style={{
             opacity: auroraOpacity,
           }}
@@ -38,7 +38,7 @@ export const AuroraBackground = ({
           dark:[background-image:var(--dark-gradient),var(--aurora)]
           [background-size:300%,_200%]
           [background-position:50%_50%,50%_50%]
-          filter blur-[10px] invert dark:invert-0
+          filter blur-[6px] invert dark:invert-0
           after:content-[""] after:absolute after:inset-0 after:[background-image:var(--white-gradient),var(--aurora)] 
           after:dark:[background-image:var(--dark-gradient),var(--aurora)]
           after:[background-size:200%,_100%] 
@@ -48,7 +48,7 @@ export const AuroraBackground = ({
             showRadialGradient &&
               `[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,var(--color-transparent)_70%),linear-gradient(to_bottom,black_70%,transparent_100%)]`
           )}
-        ></motion.div>
+        ></m.div>
       </div>
       <div className="relative z-10 w-full">
         {children}

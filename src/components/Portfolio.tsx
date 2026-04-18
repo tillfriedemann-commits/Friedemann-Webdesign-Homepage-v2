@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ArrowRight, Quote } from "lucide-react";
 
 const caseStudies = [
@@ -33,7 +33,7 @@ export default function Portfolio() {
 
         <div className="grid lg:grid-cols-2 gap-8 mb-20">
           {caseStudies.map((study, index) => (
-            <motion.div 
+            <m.div 
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -57,12 +57,12 @@ export default function Portfolio() {
                   <p className="text-white font-medium">{study.result}</p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
         {/* Testimonial Placeholder */}
-        <motion.div 
+        <m.div 
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -79,7 +79,7 @@ export default function Portfolio() {
               <p className="text-sm text-slate-500">Geschäftsführer, Musterbetrieb GmbH</p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
       </div>
     </section>

@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { LayoutTemplate, Wrench, Lightbulb } from "lucide-react";
 
 const services = [
@@ -11,7 +11,7 @@ const services = [
   {
     icon: <Wrench className="w-8 h-8 text-brand-orange" />,
     title: "Wartung & Pflege",
-    description: "Du hast keine Zeit für Updates? Mein Sorglos-Paket übernimmt das für dich. Ich kümmere mich um Backups, Sicherheit und inhaltliche Anpassungen auf Zuruf."
+    description: "Du hast keine Zeit für updates? Mein Sorglos-Paket übernimmt das für dich. Ich kümmere mich um Backups, Sicherheit und inhaltliche Anpassungen auf Zuruf."
   },
   {
     icon: <Lightbulb className="w-8 h-8 text-brand-orange" />,
@@ -26,15 +26,15 @@ export default function Services() {
       <div className="max-w-7xl mx-auto px-6">
         
         <div className="max-w-3xl mx-auto text-center mb-20">
-          <motion.h2 
+          <m.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-6"
           >
             Du hast keine Zeit für komplizierte Technik?
-          </motion.h2>
-          <motion.p 
+          </m.h2>
+          <m.p 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -42,12 +42,12 @@ export default function Services() {
             className="text-lg text-slate-600 leading-relaxed"
           >
             Viele lokale Betriebe ärgern sich über schlechte Auffindbarkeit im Netz oder unpersönliche Großagenturen, bei denen man nur eine Nummer ist. Ich ändere das. Ich nehme dir die Technik ab, damit du dich auf dein Kerngeschäft konzentrieren kannst.
-          </motion.p>
+          </m.p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {services.map((service, index) => (
-            <motion.div
+            <m.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -62,7 +62,7 @@ export default function Services() {
               <p className="text-slate-600 leading-relaxed">
                 {service.description}
               </p>
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
