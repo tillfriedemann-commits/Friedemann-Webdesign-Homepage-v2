@@ -1,8 +1,14 @@
 "use client";
 import { m } from "motion/react";
 import { Check } from "lucide-react";
+import Image from "next/image";
+import { urlFor } from "../lib/sanity/image";
 
-export default function AboutMe() {
+interface AboutMeProps {
+  image?: any;
+}
+
+export default function AboutMe({ image }: AboutMeProps) {
   const benefits = [
     "Direkter Kontakt ohne Projektmanager",
     "Schnelle und flexible Umsetzung",
@@ -22,11 +28,20 @@ export default function AboutMe() {
             className="relative order-2 lg:order-1"
           >
             <div className="aspect-square rounded-3xl overflow-hidden bg-slate-100 relative">
-               {/* Platzhalter für ein Bild von dir in Aktion (z.B. am Laptop) */}
-               <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8 text-center border-2 border-dashed border-slate-300 rounded-3xl m-4">
-                <p className="font-medium text-slate-600">Bild: Du bei der Arbeit</p>
-                <p className="text-sm mt-2">Zeigt dich authentisch an deinem Arbeitsplatz.</p>
-              </div>
+               {image ? (
+                 <Image 
+                   src={urlFor(image).width(1000).height(1000).url()} 
+                   alt="Über mich" 
+                   className="object-cover"
+                   fill
+                   sizes="(max-width: 1024px) 100vw, 50vw"
+                 />
+               ) : (
+                 <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8 text-center border-2 border-dashed border-slate-300 rounded-3xl m-4">
+                  <p className="font-medium text-slate-600">Bild: Du bei der Arbeit</p>
+                  <p className="text-sm mt-2">Noch kein Bild in Sanity hinterlegt.</p>
+                </div>
+               )}
             </div>
             <div className="absolute -top-6 -right-6 w-32 h-32 bg-brand-orange/10 rounded-full blur-2xl -z-10"></div>
             <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-brand-blue/10 rounded-full blur-2xl -z-10"></div>
