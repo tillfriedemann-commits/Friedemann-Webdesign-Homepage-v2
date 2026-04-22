@@ -1,26 +1,11 @@
 "use client";
-import React, { useRef } from "react";
-import { m, useScroll, useTransform } from "motion/react";
+import React from "react";
+import { m } from "motion/react";
 import { ArrowRight } from "lucide-react";
-import { AuroraBackground } from "./ui/aurora-background";
 
 export default function HeroSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-
-  // Fade from 0.5 opacity to 0 between 0% and 80% scroll through the section
-  const auroraOpacity = useTransform(scrollYProgress, [0, 0.8], [0.5, 0]);
-
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-white">
-      <AuroraBackground
-        auroraOpacity={auroraOpacity}
-        className="pt-32 pb-24 lg:pt-48 lg:pb-40"
-      >
+    <section className="relative overflow-hidden bg-white pt-32 pb-24 lg:pt-48 lg:pb-40">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
 
@@ -61,7 +46,6 @@ export default function HeroSection() {
 
           </div>
         </div>
-      </AuroraBackground>
     </section>
   );
 }
