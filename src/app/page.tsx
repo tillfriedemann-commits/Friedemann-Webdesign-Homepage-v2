@@ -2,7 +2,7 @@ import Header from "../components/Header";
 import HeroSection from "../components/HeroSection";
 import Services from "../components/Services";
 import AboutMe from "../components/AboutMe";
-import Portfolio from "../components/Portfolio";
+// import Portfolio from "../components/Portfolio";
 import FunnelEntry from "../components/FunnelEntry";
 import Footer from "../components/Footer";
 import { client } from "../lib/sanity/client";
@@ -23,7 +23,7 @@ export default async function Page() {
         <HeroSection />
         <Services />
         <AboutMe image={aboutMeImage} />
-        <Portfolio />
+        {/* <Portfolio /> */}
         <FunnelEntry />
       </main>
       <Footer />
