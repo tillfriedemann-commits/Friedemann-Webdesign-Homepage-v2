@@ -33,4 +33,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./out/
-          server-dir: /httpdocs/ # WICHTIG: Passe das an, falls dein Netcup-Zielordner anders heißt!
+          server-dir: friedemann-webdesign.de/httpdocs/ # WICHTIG: Passe das an, falls dein Netcup-Zielordner anders heißt!
