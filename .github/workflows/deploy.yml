@@ -18,7 +18,7 @@ jobs:
       - name: ⚙️ Node.js einrichten
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Nutze deine aktuelle Node-Version
+          node-version: '22' # Nutze deine aktuelle Node-Version
 
       - name: 📦 Pakete installieren
         run: npm ci # Schneller und sicherer als npm install für Server
