@@ -140,7 +140,7 @@ export default function AGBPage() {
             (1) Es gilt das Recht der Bundesrepublik Deutschland.
           </p>
           <p className="mb-2">
-            (2) Gerichtsstand für Kaufleute ist der Sitz des Anbieters.
+            (2) Gerichtsstand für Kaufleute ist der Sitz des Anbieters..
           </p>
           <p>
             (3) Sollten einzelne Bestimmungen unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt (Salvatorische Klausel).
