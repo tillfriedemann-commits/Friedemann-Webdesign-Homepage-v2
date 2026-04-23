@@ -1,0 +1,36 @@
+name: Sanity Netcup Deployment
+
+# Wann soll dieses Skript starten?
+on:
+  push:
+    branches:
+      - main # Startet automatisch, wenn du Code-Updates hochlädst
+  repository_dispatch:
+    types: [sanity-publish] # DAS ist das Signal, auf das wir von Sanity warten!
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Code herunterladen
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Nutze deine aktuelle Node-Version
+
+      - name: 📦 Pakete installieren
+        run: npm ci # Schneller und sicherer als npm install für Server
+
+      - name: 🏗️ Projekt bauen (Static Export)
+        run: npm run build
+
+      - name: 🚀 FTP Upload zu Netcup
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./out/
+          server-dir: /httpdocs/ # WICHTIG: Passe das an, falls dein Netcup-Zielordner anders heißt!
