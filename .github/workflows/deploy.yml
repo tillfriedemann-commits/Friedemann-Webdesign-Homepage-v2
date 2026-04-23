@@ -27,10 +27,11 @@ jobs:
         run: npm run build
 
       - name: 🚀 FTP Upload zu Netcup
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./out/
-          server-dir: friedemann-webdesign.de/httpdocs/ # WICHTIG: Passe das an, falls dein Netcup-Zielordner anders heißt!
+          server-dir: friedemann-webdesign.de/httpdocs/
+          state-name: .ftp-deploy-sync-state.json # Hilft, nur Änderungen hochzuladen und Verbindungsabbrüche zu vermeiden
