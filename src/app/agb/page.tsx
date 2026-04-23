@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react"; 
+import { ArrowLeft } from "lucide-react";
 
 export default function AGBPage() {
   return (
     <main className="max-w-3xl mx-auto py-12 px-6 text-slate-800 font-sans">
       <div className="mb-12">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           prefetch={false}
           className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-brand-blue transition-colors"
         >
