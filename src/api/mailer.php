@@ -25,7 +25,7 @@
 $admin_email = 'info@friedemann-webdesign.de';   // ← ANPASSEN!
 
 // Erlaubte Origin-Domain (für CORS) – ohne Trailing Slash
-$allowed_origin = 'https://friedemann-webdesign.de'; // ← Für Localhost-Test; in Produktion auf deine Domain ändern!
+$allowed_origin = 'https://www.friedemann-webdesign.de'; // ← Für Localhost-Test; in Produktion auf deine Domain ändern!
 
 // ──────────────────────────────────────────────────────────────
 // 2. CORS & HTTP-HEADER
