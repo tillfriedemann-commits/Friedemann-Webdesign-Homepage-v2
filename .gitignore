@@ -37,3 +37,7 @@ coverage/
 # Vercel
 .vercel/
 
+# Local security scan artifacts
+security/strix/reports/
+strix_runs/
+

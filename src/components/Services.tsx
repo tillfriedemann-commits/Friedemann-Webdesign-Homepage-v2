@@ -1,71 +1,117 @@
-"use client";
-import { m } from "motion/react";
-import { LayoutTemplate, Wrench, Lightbulb } from "lucide-react";
+import {
+  ArrowUpRight,
+  LayoutTemplate,
+  Wrench,
+  Lightbulb,
+  Check,
+} from "lucide-react";
 
 const services = [
   {
-    icon: <LayoutTemplate className="w-8 h-8 text-brand-orange" />,
-    title: "Webdesign & Entwicklung",
-    description: "Ich gestalte und programmiere maßgeschneiderte Websites, die exakt zu deinem Handwerksbetrieb oder deiner Praxis passen. Modern, schnell und optimiert für Smartphones."
+    number: "01",
+    icon: LayoutTemplate,
+    title: "Eine Website, die zu dir passt.",
+    description:
+      "Für deinen Betrieb, deine Praxis oder deine Idee. Ich gestalte und entwickle deinen Auftritt so, dass Besucher verstehen, was du anbietest – und leicht Kontakt aufnehmen können.",
+    benefits: [
+      "Individuelles Design statt Baukasten",
+      "Auf Smartphone und Desktop lesbar",
+      "Klare Inhalte und kurze Kontaktwege",
+    ],
+    link: "Meine Website besprechen",
+    featured: true,
   },
   {
-    icon: <Wrench className="w-8 h-8 text-brand-orange" />,
-    title: "Wartung & Pflege",
-    description: "Du hast keine Zeit für updates? Mein Sorglos-Paket übernimmt das für dich. Ich kümmere mich um Backups, Sicherheit und inhaltliche Anpassungen auf Zuruf."
+    number: "02",
+    icon: Wrench,
+    title: "Gut betreut. Auch danach.",
+    description:
+      "Du kümmerst dich um dein Geschäft. Ich kümmere mich um Updates, Backups und Änderungen an deiner Website – nach gemeinsamer Absprache.",
+    benefits: [
+      "Wartung und Sicherheitsupdates",
+      "Neue Inhalte und Anpassungen",
+      "Ein vertrauter Ansprechpartner",
+    ],
+    link: "Über Betreuung sprechen",
+    featured: false,
   },
   {
-    icon: <Lightbulb className="w-8 h-8 text-brand-orange" />,
-    title: "Individuelle IT-Lösungen",
-    description: "Egal ob es um die Einrichtung von E-Mail-Postfächern, Terminbuchungs-Systemen oder andere digitale Hürden geht – ich finde eine Lösung nach persönlicher Absprache."
-  }
+    number: "03",
+    icon: Lightbulb,
+    title: "Technik, die den Alltag erleichtert.",
+    description:
+      "Ein neues E-Mail-Postfach, eine Online-Terminbuchung oder eine andere digitale Frage? Wir schauen gemeinsam, welche Lösung dir wirklich hilft.",
+    benefits: [
+      "E-Mail und digitale Werkzeuge",
+      "Terminbuchung für deine Kunden",
+      "Verständlich erklärt und eingerichtet",
+    ],
+    link: "Meine Frage stellen",
+    featured: false,
+  },
 ];
 
 export default function Services() {
   return (
-    <section className="py-24 bg-slate-50" id="leistungen">
-      <div className="max-w-7xl mx-auto px-6">
-        
-        <div className="max-w-3xl mx-auto text-center mb-20">
-          <m.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-6"
-          >
-            Du hast keine Zeit für komplizierte Technik?
-          </m.h2>
-          <m.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-slate-600 leading-relaxed"
-          >
-            Viele lokale Betriebe ärgern sich über schlechte Auffindbarkeit im Netz oder unpersönliche Großagenturen, bei denen man nur eine Nummer ist. Ich ändere das. Ich nehme dir die Technik ab, damit du dich auf dein Kerngeschäft konzentrieren kannst.
-          </m.p>
+    <section
+      id="leistungen"
+      className="section services-section"
+      aria-labelledby="services-title"
+    >
+      <div className="site-container">
+        <div className="section-heading split-heading">
+          <div>
+            <p className="eyebrow">Was ich für dich tun kann</p>
+            <h2 id="services-title">
+              Du hast das Geschäft.
+              <br />
+              Ich kümmere mich ums Digitale.
+            </h2>
+          </div>
+          <p>
+            Von der ersten Website bis zur laufenden Pflege. Persönlich
+            abgestimmt, verständlich erklärt und passend zu deinem Alltag.
+          </p>
         </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <m.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 + 0.2 }}
-              className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
-            >
-              <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mb-6">
-                {service.icon}
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-4">{service.title}</h3>
-              <p className="text-slate-600 leading-relaxed">
-                {service.description}
-              </p>
-            </m.div>
-          ))}
+        <div className="service-grid">
+          {services.map(
+            ({
+              number,
+              icon: Icon,
+              title,
+              description,
+              benefits,
+              link,
+              featured,
+            }) => (
+              <article
+                key={number}
+                className={`service-card${featured ? " service-card-featured" : ""}`}
+              >
+                <div className="service-card-top">
+                  <span className="service-icon">
+                    <Icon size={24} strokeWidth={1.6} aria-hidden="true" />
+                  </span>
+                  <span className="card-number">{number}</span>
+                </div>
+                <h3>{title}</h3>
+                <p>{description}</p>
+                <ul>
+                  {benefits.map((benefit) => (
+                    <li key={benefit}>
+                      <Check size={15} aria-hidden="true" />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+                <a href="#kontakt" className="text-link">
+                  {link}
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                </a>
+              </article>
+            ),
+          )}
         </div>
-
       </div>
     </section>
   );

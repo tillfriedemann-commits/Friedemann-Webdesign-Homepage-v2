@@ -1,325 +1,381 @@
 "use client";
-import { useState, FormEvent } from "react";
-import { m, AnimatePresence } from "motion/react";
+
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import Link from "next/link";
 import {
-  MonitorSmartphone,
+  ArrowLeft,
+  ArrowUpRight,
+  Check,
+  CheckCircle2,
+  CircleHelp,
+  LayoutTemplate,
+  Loader2,
+  Mail,
+  Phone,
   RefreshCw,
   ShieldCheck,
-  HelpCircle,
-  ArrowRight,
-  Loader2,
   AlertCircle,
 } from "lucide-react";
 
-// ──────────────────────────────────────────────────────────────
-// Typen
-// ──────────────────────────────────────────────────────────────
-
 type Step = "selection" | "contact" | "success";
 type FormStatus = "idle" | "loading" | "error";
-
-interface FormData {
-  name: string;
-  email: string;
-  message: string;
-}
-
-// ──────────────────────────────────────────────────────────────
-// URL zum PHP-Mailer-Skript anpassen, falls nötig
-// ──────────────────────────────────────────────────────────────
-
-const MAILER_URL = "/api/mailer.php";
-
-// ──────────────────────────────────────────────────────────────
-// Komponente
-// ──────────────────────────────────────────────────────────────
+type ContactData = { name: string; email: string; message: string };
+const options = [
+  { id: "new", title: "Eine neue Website", icon: LayoutTemplate },
+  { id: "rework", title: "Website überarbeiten", icon: RefreshCw },
+  { id: "maintenance", title: "Wartung & Pflege", icon: ShieldCheck },
+  { id: "other", title: "Eine andere IT-Frage", icon: CircleHelp },
+];
 
 export default function FunnelEntry() {
   const [step, setStep] = useState<Step>("selection");
   const [selection, setSelection] = useState<string | null>(null);
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-
-  // Formularfelder
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<ContactData>({
     name: "",
     email: "",
     message: "",
   });
-
-  // Honeypot-Feld (muss immer leer bleiben)
   const [honeypot, setHoneypot] = useState("");
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
+  const previousStep = useRef(step);
+  const submissionInFlight = useRef(false);
 
-  const options = [
-    { id: "new", title: "Neue Website", icon: <MonitorSmartphone className="w-6 h-6" /> },
-    { id: "rework", title: "Website überarbeiten", icon: <RefreshCw className="w-6 h-6" /> },
-    { id: "maintenance", title: "Regelmäßige Pflege", icon: <ShieldCheck className="w-6 h-6" /> },
-    { id: "other", title: "Sonstige IT-Frage", icon: <HelpCircle className="w-6 h-6" /> },
-  ];
+  useEffect(() => {
+    if (previousStep.current !== step) {
+      headingRef.current?.focus({ preventScroll: true });
+      headingRef.current?.scrollIntoView({
+        block: "nearest",
+        behavior: "instant",
+      });
+      previousStep.current = step;
+    }
+  }, [step]);
 
-  const handleSelect = (id: string) => {
-    setSelection(id);
-    setStep("contact");
+  useEffect(() => {
+    if (status === "error") errorRef.current?.focus();
+  }, [status, errorMessage]);
+
+  const goBack = () => {
+    setStep("selection");
+    setStatus("idle");
+    setErrorMessage("");
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  // ────────────────────────────────────────────────────────────
-  // Formulardaten per fetch() an mailer.php senden
-  // ────────────────────────────────────────────────────────────
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (submissionInFlight.current) return;
+    submissionInFlight.current = true;
     setStatus("loading");
     setErrorMessage("");
-
     try {
-      const response = await fetch(MAILER_URL, {
+      const response = await fetch("/api/mailer.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-          selection: selection,
-          // Honeypot-Feld: wird vom PHP-Backend geprüft
-          website_url: honeypot,
-        }),
+        body: JSON.stringify({ ...formData, selection, website_url: honeypot }),
+        signal: AbortSignal.timeout(20000),
       });
-
-      const result = await response.json();
-
-      if (result.status === "success") {
-        setStep("success");
-        setStatus("idle");
-        // Formular zurücksetzen
-        setFormData({ name: "", email: "", message: "" });
-        setHoneypot("");
-      } else {
-        setStatus("error");
-        setErrorMessage(
-          result.message || "Ein Fehler ist aufgetreten. Bitte versuche es erneut."
-        );
+      if (!response.headers.get("content-type")?.includes("application/json")) {
+        throw new Error("invalid-response");
       }
+      const result = await response.json();
+      if (!response.ok || result.status !== "success") {
+        setErrorMessage(
+          result.message ||
+            "Deine Anfrage konnte gerade nicht gesendet werden. Bitte versuche es erneut oder schreib mir direkt.",
+        );
+        setStatus("error");
+        return;
+      }
+      setStep("success");
+      setStatus("idle");
+      setFormData({ name: "", email: "", message: "" });
+      setHoneypot("");
     } catch {
       setStatus("error");
       setErrorMessage(
-        "Verbindungsfehler. Bitte prüfe deine Internetverbindung und versuche es erneut."
+        "Deine Anfrage konnte gerade nicht gesendet werden. Deine Eingaben bleiben erhalten. Bitte versuche es erneut oder schreib mir direkt.",
       );
+    } finally {
+      submissionInFlight.current = false;
     }
   };
 
+  const selectedTitle = options.find(
+    (option) => option.id === selection,
+  )?.title;
+  const updateField = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFormData((previous) => ({
+      ...previous,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
   return (
-    <section className="py-24 bg-slate-50" id="kontakt">
-      <div className="max-w-3xl mx-auto px-6">
-
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-4">
-            Lass uns dein Projekt besprechen
+    <section
+      id="kontakt"
+      className="section contact-section"
+      aria-labelledby="contact-title"
+    >
+      <div className="site-container contact-grid">
+        <div className="contact-copy">
+          <p className="eyebrow">Fangen wir mit einem Gespräch an</p>
+          <h2 id="contact-title">
+            Deine Idee.
+            <br />
+            Unser erster Schritt.
           </h2>
-          <p className="text-lg text-slate-600">
-            Kein langes Formular. Klick einfach an, wobei ich dir helfen kann.
+          <p>
+            Eine neue Website, ein frischer Auftritt oder einfach eine Frage?
+            Erzähl mir kurz, was du vorhast. Ich melde mich persönlich bei dir.
           </p>
+          <ul className="contact-points">
+            <li>
+              <Check size={17} aria-hidden="true" /> Kostenloses Erstgespräch
+            </li>
+            <li>
+              <Check size={17} aria-hidden="true" /> Unverbindlich kennenlernen
+            </li>
+            <li>
+              <Check size={17} aria-hidden="true" /> Direkt mit mir, ohne Umwege
+            </li>
+          </ul>
+          <div className="direct-contact">
+            <p>Lieber direkt Kontakt aufnehmen?</p>
+            <a href="mailto:info@friedemann-webdesign.de">
+              <Mail size={16} aria-hidden="true" />
+              info@friedemann-webdesign.de
+            </a>
+            <a href="tel:+491608592128">
+              <Phone size={16} aria-hidden="true" />
+              0160 859 21 28
+            </a>
+          </div>
         </div>
+        <div className="contact-card">
+          <div className="form-progress">
+            <span>
+              {step === "success"
+                ? "Danke für dein Vertrauen"
+                : "Deine Anfrage"}
+            </span>
+            <span>
+              {step === "selection"
+                ? "Schritt 1 von 2"
+                : step === "contact"
+                  ? "Schritt 2 von 2"
+                  : "Anfrage gesendet"}
+            </span>
+          </div>
 
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-10 min-h-[400px] relative overflow-hidden">
-          <AnimatePresence mode="wait">
-
-            {/* ─── Schritt 1: Service-Auswahl ─── */}
-            {step === "selection" && (
-              <m.div
-                key="selection"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="h-full flex flex-col justify-center"
-              >
-                <h3 className="text-xl font-semibold text-slate-900 mb-6 text-center">Wobei kann ich dich unterstützen?</h3>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {options.map((opt) => (
-                    <button
-                      key={opt.id}
-                      onClick={() => handleSelect(opt.id)}
-                      className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-slate-100 hover:border-brand-orange hover:bg-orange-50 transition-all group text-center"
-                    >
-                      <div className="text-slate-400 group-hover:text-brand-orange mb-3 transition-colors">
-                        {opt.icon}
-                      </div>
-                      <span className="font-medium text-slate-700 group-hover:text-brand-orange transition-colors">
-                        {opt.title}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </m.div>
-            )}
-
-            {/* ─── Schritt 2: Kontaktformular ─── */}
-            {step === "contact" && (
-              <m.div
-                key="contact"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="h-full flex flex-col justify-center"
-              >
-                <button
-                  onClick={() => { setStep("selection"); setStatus("idle"); setErrorMessage(""); }}
-                  className="text-sm text-slate-500 hover:text-slate-900 mb-6 inline-flex items-center"
-                >
-                  ← Zurück zur Auswahl
-                </button>
-                <h3 className="text-xl font-semibold text-slate-900 mb-6">Erzähl mir von deinem Projekt</h3>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-
-                  {/* ═══ HONEYPOT – Unsichtbar für echte Nutzer ═══ */}
-                  <div
-                    aria-hidden="true"
-                    className="opacity-0 absolute -z-50 overflow-hidden"
-                    style={{ position: "absolute", left: "-9999px", top: "-9999px" }}
-                  >
-                    <label htmlFor="website_url">Website-URL</label>
-                    <input
-                      type="text"
-                      id="website_url"
-                      name="website_url"
-                      tabIndex={-1}
-                      autoComplete="off"
-                      value={honeypot}
-                      onChange={(e) => setHoneypot(e.target.value)}
-                    />
-                  </div>
-
-                  {/* Name */}
-                  <div>
-                    <label htmlFor="contact-name" className="block text-sm font-medium text-slate-700 mb-1">
-                      Dein Name / Firma
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      id="contact-name"
-                      name="name"
-                      maxLength={200}
-                      value={formData.name}
-                      onChange={handleChange}
-                      disabled={status === "loading"}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-orange/50 focus:border-brand-orange transition-all disabled:opacity-50"
-                      placeholder="Max Mustermann"
-                    />
-                  </div>
-
-                  {/* E-Mail */}
-                  <div>
-                    <label htmlFor="contact-email" className="block text-sm font-medium text-slate-700 mb-1">
-                      Deine E-Mail-Adresse
-                    </label>
-                    <input
-                      required
-                      type="email"
-                      id="contact-email"
-                      name="email"
-                      maxLength={320}
-                      value={formData.email}
-                      onChange={handleChange}
-                      disabled={status === "loading"}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-orange/50 focus:border-brand-orange transition-all disabled:opacity-50"
-                      placeholder="max@beispiel.de"
-                    />
-                  </div>
-
-                  {/* Nachricht */}
-                  <div>
-                    <label htmlFor="contact-message" className="block text-sm font-medium text-slate-700 mb-1">
-                      Deine Nachricht
-                    </label>
-                    <textarea
-                      required
-                      id="contact-message"
-                      name="message"
-                      rows={4}
-                      maxLength={5000}
-                      value={formData.message}
-                      onChange={handleChange}
-                      disabled={status === "loading"}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-orange/50 focus:border-brand-orange transition-all resize-none disabled:opacity-50"
-                      placeholder="Erzähl mir kurz, was du dir vorstellst…"
-                    />
-                  </div>
-
-                  {/* ═══ Fehlermeldung ═══ */}
-                  <AnimatePresence>
-                    {status === "error" && errorMessage && (
-                      <m.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700"
-                      >
-                        <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                        <span>{errorMessage}</span>
-                      </m.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Submit-Button */}
+          {step === "selection" && (
+            <div className="form-stage">
+              <h3 ref={headingRef} tabIndex={-1}>
+                Wobei kann ich dir helfen?
+              </h3>
+              <p>Wähle, was am besten zu deiner Idee passt.</p>
+              <div className="service-options">
+                {options.map(({ id, title, icon: Icon }) => (
                   <button
-                    type="submit"
-                    disabled={status === "loading"}
-                    className="w-full flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-brand-blue hover:bg-brand-blue/90 rounded-xl transition-colors mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="service-option"
+                    type="button"
+                    key={id}
+                    onClick={() => {
+                      setSelection(id);
+                      setStep("contact");
+                    }}
                   >
-                    {status === "loading" ? (
-                      <>
-                        <Loader2 className="mr-2 w-5 h-5 animate-spin" />
-                        Wird gesendet…
-                      </>
-                    ) : (
-                      <>
-                        Anfrage absenden
-                        <ArrowRight className="ml-2 w-5 h-5" />
-                      </>
-                    )}
+                    <Icon size={23} strokeWidth={1.6} aria-hidden="true" />
+                    <span>{title}</span>
                   </button>
+                ))}
+              </div>
+              <p className="selection-footnote">
+                Du bist noch unsicher? Wähle einfach „Eine andere IT-Frage“. Wir
+                finden gemeinsam heraus, was du brauchst.
+              </p>
+            </div>
+          )}
 
-                  <p className="text-xs text-center text-slate-500 mt-4">
-                    Deine Daten werden vertraulich behandelt und nicht an Dritte weitergegeben.
-                  </p>
-                </form>
-              </m.div>
-            )}
-
-            {/* ─── Schritt 3: Erfolg ─── */}
-            {step === "success" && (
-              <m.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="h-full flex flex-col items-center justify-center text-center py-12"
+          {step === "contact" && (
+            <div className="form-stage">
+              <button
+                type="button"
+                className="form-back"
+                onClick={goBack}
+                disabled={status === "loading"}
               >
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                  <ShieldCheck className="w-8 h-8 text-green-600" />
+                <ArrowLeft size={15} aria-hidden="true" /> Auswahl ändern
+              </button>
+              <h3 ref={headingRef} tabIndex={-1}>
+                Erzähl mir von deiner Idee.
+              </h3>
+              <p>
+                Dein Thema: <strong>{selectedTitle}</strong>
+              </p>
+              <form
+                onSubmit={handleSubmit}
+                className="contact-form"
+                aria-busy={status === "loading"}
+              >
+                <div className="honeypot" aria-hidden="true">
+                  <label htmlFor="website_url">Website-URL</label>
+                  <input
+                    id="website_url"
+                    type="text"
+                    name="website_url"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(event) => setHoneypot(event.target.value)}
+                  />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">Vielen Dank!</h3>
-                <p className="text-slate-600">
-                  Ich habe deine Anfrage erhalten und melde mich innerhalb von 24 Stunden persönlich bei dir.
-                </p>
+                <div>
+                  <label className="field-label" htmlFor="contact-name">
+                    Dein Name / Firma <span>Pflichtfeld</span>
+                  </label>
+                  <input
+                    className="form-input"
+                    id="contact-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    required
+                    maxLength={200}
+                    value={formData.name}
+                    onChange={updateField}
+                    disabled={status === "loading"}
+                    placeholder="Wie darf ich dich ansprechen?"
+                  />
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="contact-email">
+                    Deine E-Mail-Adresse <span>Pflichtfeld</span>
+                  </label>
+                  <input
+                    className="form-input"
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    maxLength={320}
+                    value={formData.email}
+                    onChange={updateField}
+                    disabled={status === "loading"}
+                    placeholder="du@dein-betrieb.de"
+                  />
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="contact-message">
+                    Was hast du vor? <span>Pflichtfeld</span>
+                  </label>
+                  <textarea
+                    className="form-input"
+                    id="contact-message"
+                    name="message"
+                    rows={4}
+                    required
+                    maxLength={5000}
+                    value={formData.message}
+                    onChange={updateField}
+                    disabled={status === "loading"}
+                    aria-describedby="message-help"
+                    placeholder="Zum Beispiel: Ich brauche eine Website für meinen Betrieb …"
+                  />
+                  <span className="field-help" id="message-help">
+                    Ein paar Sätze reichen. Die Details besprechen wir
+                    persönlich.
+                  </span>
+                </div>
+                {status === "error" && (
+                  <div
+                    className="form-error"
+                    role="alert"
+                    tabIndex={-1}
+                    ref={errorRef}
+                  >
+                    <AlertCircle size={19} aria-hidden="true" />
+                    <div>
+                      {errorMessage}
+                      <br />
+                      <a href="mailto:info@friedemann-webdesign.de">
+                        Direkt per E-Mail schreiben
+                      </a>
+                    </div>
+                  </div>
+                )}
                 <button
-                  onClick={() => { setStep("selection"); setSelection(null); }}
-                  className="mt-8 text-brand-orange font-medium hover:underline"
+                  type="submit"
+                  className="button button-primary form-submit"
+                  disabled={status === "loading"}
                 >
-                  Neue Anfrage stellen
+                  {status === "loading" ? (
+                    <>
+                      <Loader2
+                        size={18}
+                        className="spinner"
+                        aria-hidden="true"
+                      />{" "}
+                      Wird gesendet …
+                    </>
+                  ) : (
+                    <>
+                      Unverbindlich anfragen{" "}
+                      <ArrowUpRight size={18} aria-hidden="true" />
+                    </>
+                  )}
                 </button>
-              </m.div>
-            )}
+                <p className="form-privacy">
+                  Ich nutze deine Angaben, um deine Anfrage zu beantworten. Mehr
+                  zur Verarbeitung deiner Daten findest du in der{" "}
+                  <Link href="/datenschutz" prefetch={false}>
+                    Datenschutzerklärung
+                  </Link>
+                  .
+                </p>
+              </form>
+            </div>
+          )}
 
-          </AnimatePresence>
+          {step === "success" && (
+            <div className="form-stage form-success">
+              <div className="success-icon">
+                <CheckCircle2 size={29} aria-hidden="true" />
+              </div>
+              <h3 ref={headingRef} tabIndex={-1}>
+                Danke! Jetzt bin ich dran.
+              </h3>
+              <p>
+                Deine Anfrage wurde gesendet. Ich melde mich innerhalb von 24
+                Stunden persönlich bei dir. Dann sprechen wir über deine Idee
+                und die nächsten Schritte.
+              </p>
+              <button
+                className="text-link"
+                type="button"
+                onClick={() => {
+                  setSelection(null);
+                  setStep("selection");
+                }}
+              >
+                Eine weitere Frage stellen{" "}
+                <ArrowUpRight size={16} aria-hidden="true" />
+              </button>
+            </div>
+          )}
+          <span role="status" aria-live="polite" className="sr-only">
+            {status === "loading"
+              ? "Deine Anfrage wird gesendet."
+              : step === "success"
+                ? "Deine Anfrage wurde erfolgreich gesendet."
+                : ""}
+          </span>
         </div>
-
       </div>
     </section>
   );

@@ -1,87 +1,83 @@
-"use client";
-import { m } from "motion/react";
-import { Check } from "lucide-react";
 import Image from "next/image";
-import { urlFor } from "../lib/sanity/image";
+import {
+  ArrowUpRight,
+  MessageCircle,
+  Handshake,
+  GraduationCap,
+} from "lucide-react";
 
-interface AboutMeProps {
-  image?: any;
-}
+const benefits = [
+  {
+    icon: MessageCircle,
+    title: "Du sprichst direkt mit mir.",
+    text: "Von der ersten Idee bis zur fertigen Seite. Ich kenne dein Projekt und kümmere mich selbst darum.",
+  },
+  {
+    icon: Handshake,
+    title: "Wir klären alles gemeinsam.",
+    text: "Was brauchst du wirklich? Was kostet es? Was passiert als Nächstes? Wir besprechen das verständlich und verbindlich.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Design trifft technisches Know-how.",
+    text: "Mein Informatikstudium ist die Grundlage. Dein Geschäft und deine Kunden geben die Richtung vor.",
+  },
+];
 
-export default function AboutMe({ image }: AboutMeProps) {
-  const benefits = [
-    "Direkter Kontakt ohne Projektmanager",
-    "Schnelle und flexible Umsetzung",
-    "Faire Preise ohne Agentur-Overhead",
-    "Technisches Know-how aus dem Informatikstudium"
-  ];
-
+export default function AboutMe({ imageUrl }: { imageUrl?: string }) {
   return (
-    <section className="py-24 bg-white" id="ueber-mich">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          
-          <m.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="relative order-2 lg:order-1"
-          >
-            <div className="aspect-square rounded-3xl overflow-hidden bg-slate-100 relative">
-               {image ? (
-                 <Image 
-                   src={urlFor(image).width(1000).height(1000).url()} 
-                   alt="Über mich" 
-                   className="object-cover"
-                   fill
-                   sizes="(max-width: 1024px) 100vw, 50vw"
-                 />
-               ) : (
-                 <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8 text-center border-2 border-dashed border-slate-300 rounded-3xl m-4">
-                  <p className="font-medium text-slate-600">Bild: Du bei der Arbeit</p>
-                  <p className="text-sm mt-2">Noch kein Bild in Sanity hinterlegt.</p>
-                </div>
-               )}
+    <section
+      id="ueber-mich"
+      className="section about-section"
+      aria-labelledby="about-title"
+    >
+      <div className="site-container about-grid">
+        <div className="about-intro">
+          <p className="eyebrow">Persönlich statt kompliziert</p>
+          <h2 id="about-title">
+            Eine gute Website beginnt mit einem guten Gespräch.
+          </h2>
+          <p>
+            Hallo, ich bin Till – Informatikstudent und Webdesigner aus
+            Wahrenholz. Ich helfe lokalen Unternehmen, ihre Arbeit auch online
+            sichtbar zu machen.
+          </p>
+          <div className="about-person">
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                width={60}
+                height={60}
+                alt=""
+                className="about-avatar"
+                sizes="60px"
+              />
+            ) : (
+              <span className="about-avatar avatar-initials" aria-hidden="true">
+                TF
+              </span>
+            )}
+            <div>
+              <strong>Till Friedemann</strong>
+              <span>Ein Mensch. Ein Ansprechpartner.</span>
             </div>
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-brand-orange/10 rounded-full blur-2xl -z-10"></div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-brand-blue/10 rounded-full blur-2xl -z-10"></div>
-          </m.div>
-
-          <m.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="order-1 lg:order-2"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-6">
-              Hallo, ich bin dein <br/>
-              <span className="text-brand-blue">digitaler Handwerker.</span>
-            </h2>
-            
-            <div className="space-y-6 text-lg text-slate-600 leading-relaxed mb-8">
-              <p>
-                Als Informatikstudent aus der Region habe ich mich darauf spezialisiert, lokalen Unternehmen zu einem professionellen digitalen Auftritt zu verhelfen. 
-              </p>
-              <p>
-                Warum die Zusammenarbeit mit mir als Solo-Freelancer für dich der beste Weg ist? Ganz einfach: Bei mir gibt es keine Warteschleifen, keine wechselnden Ansprechpartner und keine versteckten Kosten.
-              </p>
-              <p>
-                Du sprichst immer direkt mit demjenigen, der deine Website auch baut. Das spart Zeit, Nerven und Budget.
-              </p>
+          </div>
+          <a href="#kontakt" className="text-link">
+            Lernen wir uns kennen <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
+        </div>
+        <div className="about-benefits">
+          {benefits.map(({ icon: Icon, title, text }) => (
+            <div className="about-benefit" key={title}>
+              <span className="about-benefit-icon">
+                <Icon size={23} strokeWidth={1.6} aria-hidden="true" />
+              </span>
+              <div>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
             </div>
-
-            <ul className="space-y-4">
-              {benefits.map((benefit, index) => (
-                <li key={index} className="flex items-center gap-3 text-slate-800 font-medium">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-green-600" />
-                  </div>
-                  {benefit}
-                </li>
-              ))}
-            </ul>
-          </m.div>
-
+          ))}
         </div>
       </div>
     </section>

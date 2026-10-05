@@ -1,34 +1,34 @@
-"use client";
-import { m } from "motion/react";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 
 export default function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <m.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-2"
+    <header className="site-header">
+      <div className="site-container header-inner">
+        <a
+          href="#start"
+          className="brand-link"
+          aria-label="Friedemann Webdesign – zum Seitenanfang"
         >
-          <img
+          <Image
             src="/logo.webp"
-            alt="Friedemann Webdesign Logo"
-            className="h-24 w-auto object-contain py-1"
+            alt="Friedemann Webdesign"
+            width={240}
+            height={131}
+            className="brand-logo"
+            priority
           />
-        </m.div>
-
-        <m.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
-          <a
-            href="#kontakt"
-            className="inline-flex items-center justify-center px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-medium text-white bg-brand-blue hover:bg-brand-blue/90 rounded-full transition-colors"
-          >
-            <span className="sm:hidden">Kontakt</span>
-            <span className="hidden sm:inline">Kostenloses Erstgespräch</span>
-          </a>
-        </m.div>
+        </a>
+        <nav aria-label="Hauptnavigation" className="header-nav">
+          <a href="#leistungen">Leistungen</a>
+          <a href="#ueber-mich">Über mich</a>
+          <a href="#ablauf">So läuft’s</a>
+        </nav>
+        <a href="#kontakt" className="button button-dark header-cta">
+          <span className="header-cta-long">Projekt besprechen</span>
+          <span className="header-cta-short">Kontakt</span>
+          <ArrowUpRight size={17} aria-hidden="true" />
+        </a>
       </div>
     </header>
   );

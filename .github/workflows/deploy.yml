@@ -8,15 +8,20 @@ on:
   repository_dispatch:
     types: [sanity-publish] # DAS ist das Signal, auf das wir von Sanity warten!
 
+permissions:
+  contents: read
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Code herunterladen
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: ⚙️ Node.js einrichten
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22' # Nutze deine aktuelle Node-Version
 
@@ -26,8 +31,21 @@ jobs:
       - name: 🏗️ Projekt bauen (Static Export)
         run: npm run build
 
+      - name: PHP-Kontaktformular sicher testen
+        run: |
+          docker run --rm --user 65534:65534 --network none --read-only --tmpfs /tmp:rw,nosuid,size=16m \
+            --mount "type=bind,source=$PWD,target=/project,readonly" \
+            -e FRIEDEMANN_RATE_LIMIT_DIR=/tmp/contact-rate \
+            php:8.3-cli@sha256:f1ed6d1fd0aa769ab94ca307b9deaf55fbc18434315b70e319cd79078515cd2b \
+            php /project/security/tests/contact-mailer.php
+
+      - name: Kontaktformular-Backend bereitstellen
+        run: |
+          mkdir -p out/api
+          cp src/api/mailer.php out/api/mailer.php
+
       - name: 🚀 FTP Upload zu Netcup
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        uses: SamKirkland/FTP-Deploy-Action@fe9c9aad1198372d80a77c8dace63cbe48b69eac # v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
